@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luhan Marques | Portfólio</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & React DOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel Compiler for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles for Glassmorphism and Responsive Tweaks -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0f19;
+      color: #f3f4f6;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Glassmorphism utilities */
+    .glass-card {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-nav {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
+
+    /* Background glow spheres */
+    .glow-bg {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="selection:bg-cyan-500 selection:text-white">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- ÍCONES SVG NATIVOS PARA REDES SOCIAIS ---
+    const GithubIcon = ({ className = "w-5 h-5" }) => (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+      </svg>
+    );
+
+    const LinkedinIcon = ({ className = "w-5 h-5" }) => (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.78a1.62 1.62 0 1 0 1.62 1.62 1.62 1.62 0 0 0-1.62-1.62z" />
+      </svg>
+    );
+
+    const WhatsappIcon = ({ className = "w-5 h-5" }) => (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.572-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+      </svg>
+    );
+
+    // --- DADOS PESSOAIS E PROJETOS REAIS ---
+    const PORTFOLIO_DATA = {
+      name: "Luhan Marques",
+      location: "Macau-RN",
+      email: "Luhanmarques50@gmail.com",
+      whatsapp: "5584999917232",
+      github: "https://github.com/Luanmarqz",
+      linkedin: "https://www.linkedin.com/in/luhan-marques-66899725a/",
+      education: "Sistemas para Internet no IFRN",
+      profileImage: "Gemini_Generated_Image_merk37merk37merk.jpg",
+      
+      bioAbout: "Olá! Meu nome é Luhan e sou um desenvolvedor Junior apaixonado por criar experiências digitais incríveis. Com uma sólida formação em Sistemas para Internet no IFRN, tenho trabalhado em diversos projetos que me permitiram aprimorar minhas habilidades em HTML, CSS, JavaScript e frameworks modernos como React e Django.",
+      bioTrajectory: "Comecei minha jornada na área de tecnologia com uma paixão por resolver problemas e criar soluções inovadoras. Meu primeiro contato com programação foi no ensino médio, onde desenvolvi um interesse crescente por desenvolvimento web. Após concluir o ensino médio, ingressei no curso de Sistemas para Internet no IFRN, onde aprofundei meus conhecimentos em programação e desenvolvimento de software.",
+
+      typingStrings: [
+        "Desenvolvedor Web",
+        "Formado em Sistemas para Internet (IFRN)",
+        "Programador Full Stack",
+        "Entusiasta em Hardware e Tecnologia"
+      ],
+
+      skills: [
+        { name: "HTML, CSS & JavaScript", level: 95, category: "Front-End", icon: "layout" },
+        { name: "Python, Java & C++", level: 90, category: "Back-End", icon: "code" },
+        { name: "PHP, MySQL & MongoDB", level: 80, category: "Banco de Dados", icon: "database" },
+        { name: "React, Django & Node.js", level: 70, category: "Frameworks", icon: "cpu" },
+      ],
+
+      services: [
+        {
+          title: "Programação",
+          subtitle: "Programador",
+          description: "Desenvolvimento de algoritmos e sistemas em Python, JavaScript e Java.",
+          icon: "code-2"
+        },
+        {
+          title: "Desenvolvimento Web",
+          subtitle: "Full Stack",
+          description: "Criação de aplicações web modernas com HTML, React, Bootstrap e Django.",
+          icon: "laptop"
+        },
+        {
+          title: "Suporte Técnico",
+          subtitle: "Informática & Hardware",
+          description: "Suporte técnico especializado em manutenção de computadores e montagem de hardware.",
+          icon: "wrench"
+        }
+      ],
+
+      projects: [
+        {
+          id: 1,
+          title: "Lista de Ocorrências",
+          tech: "Django, Bootstrap e JavaScript",
+          description: "Sistema web para cadastro e gerenciamento de ocorrências, com interface fluida e integração backend robusta.",
+          image: "img/ocorrencia.png",
+          liveUrl: "https://luhanmarq.pythonanywhere.com/",
+          githubUrl: "https://github.com/Luanmarqz",
+          tags: ["Django", "Python", "Bootstrap", "JavaScript"]
+        },
+        {
+          id: 2,
+          title: "Cópia do Spotify",
+          tech: "React, Vite e JavaScript",
+          description: "Interface web responsiva inspirada no player do Spotify, com foco na arquitetura de componentes reativos.",
+          image: "img/ProjetoSpotify.png",
+          liveUrl: "https://spotify-project-one-lyart.vercel.app/",
+          githubUrl: "https://github.com/Luanmarqz",
+          tags: ["React", "Vite", "JavaScript", "CSS3"]
+        },
+        {
+          id: 3,
+          title: "Página de Login",
+          tech: "HTML, CSS e JavaScript",
+          description: "Design limpo e moderno para telas de autenticação com validação client-side e layout adaptável.",
+          image: "img/login.png",
+          liveUrl: "https://luanmarqz.github.io/Login-Page/",
+          githubUrl: "https://github.com/Luanmarqz/Login-Page",
+          tags: ["HTML5", "CSS3", "JavaScript"]
+        }
+      ]
+    };
+
+    // --- HOOK DE EFEITO DIGITAÇÃO ---
+    const useTypingEffect = (strings, speed = 80, pause = 2000) => {
+      const [displayedText, setDisplayedText] = useState("");
+      const [stringIndex, setStringIndex] = useState(0);
+      const [isDeleting, setIsDeleting] = useState(false);
+
+      useEffect(() => {
+        const currentFullText = strings[stringIndex];
+
+        const handleTyping = () => {
+          if (!isDeleting) {
+            setDisplayedText(currentFullText.substring(0, displayedText.length + 1));
+            if (displayedText === currentFullText) {
+              setTimeout(() => setIsDeleting(true), pause);
+            }
+          } else {
+            setDisplayedText(currentFullText.substring(0, displayedText.length - 1));
+            if (displayedText === "") {
+              setIsDeleting(false);
+              setStringIndex((prev) => (prev + 1) % strings.length);
+            }
+          }
+        };
+
+        const timer = setTimeout(handleTyping, isDeleting ? speed / 2 : speed);
+        return () => clearTimeout(timer);
+      }, [displayedText, isDeleting, stringIndex, strings, speed, pause]);
+
+      return displayedText;
+    };
+
+    // --- COMPONENTE PRINCIPAL ---
+    function App() {
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+      const [toastMessage, setToastMessage] = useState("");
+
+      const typedRole = useTypingEffect(PORTFOLIO_DATA.typingStrings);
+
+      // Re-inicializa os ícones do Lucide sempre que houver mudanças na DOM
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [isMobileMenuOpen]);
+
+      const copyToClipboard = (text, label) => {
+        const textToCopy = text;
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = textToCopy;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        setToastMessage(`${label} copiado para a área de transferência!`);
+        setTimeout(() => setToastMessage(""), 3500);
+      };
+
+      return (
+        <div className="min-h-screen relative flex flex-col justify-between">
+          
+          {/* Efeitos de Iluminação de Fundo */}
+          <div className="glow-bg w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-cyan-500/15 top-[-5%] left-[-10%]"></div>
+          <div className="glow-bg w-[250px] sm:w-[420px] h-[250px] sm:h-[420px] bg-indigo-500/15 top-[35%] right-[-10%]"></div>
+          <div className="glow-bg w-[320px] sm:w-[500px] h-[320px] sm:h-[500px] bg-purple-500/10 bottom-[-5%] left-[15%]"></div>
+
+          {/* --- NAVBAR --- */}
+          <header className="sticky top-0 z-40 w-full glass-nav border-b border-gray-800/80 px-4 sm:px-8 py-4 transition-all">
+            <div className="max-w-6xl mx-auto flex items-center justify-between">
+              
+              {/* Logo */}
+              <a href="#home" className="flex items-center gap-2.5 group">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                  LM
+                </div>
+                <span className="font-bold text-lg tracking-tight text-white group-hover:text-cyan-400 transition-colors">
+                  Luhan<span className="text-cyan-400">.dev</span>
+                </span>
+              </a>
+
+              {/* Links Desktop */}
+              <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium text-gray-300">
+                <a href="#home" className="hover:text-cyan-400 transition-colors">Home</a>
+                <a href="#sobre" className="hover:text-cyan-400 transition-colors">Sobre</a>
+                <a href="#servicos" className="hover:text-cyan-400 transition-colors">Serviços</a>
+                <a href="#especialidade" className="hover:text-cyan-400 transition-colors">Especialidades</a>
+                <a href="#projetos" className="hover:text-cyan-400 transition-colors">Projetos</a>
+                <a href="#contato" className="hover:text-cyan-400 transition-colors">Contato</a>
+              </nav>
+
+              {/* Botão de Ação & Menu Mobile */}
+              <div className="flex items-center gap-3">
+                <a 
+                  href={`https://api.whatsapp.com/send?phone=${PORTFOLIO_DATA.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-xl text-xs font-semibold tracking-wide bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  WhatsApp
+                </a>
+
+                {/* Hamburger Mobile */}
+                <button 
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  aria-label="Abrir Menu"
+                  className="md:hidden p-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800/80 focus:outline-none border border-gray-800"
+                >
+                  <i data-lucide={isMobileMenuOpen ? "x" : "menu"} className="w-6 h-6"></i>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Drawer Navigation para Celular e Tablet */}
+          {isMobileMenuOpen && (
+            <div className="fixed inset-0 z-50 md:hidden flex">
+              <div 
+                className="fixed inset-0 bg-black/75 backdrop-blur-sm" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              ></div>
+
+              <div className="relative w-4/5 max-w-xs bg-gray-900 h-full border-r border-gray-800 p-6 flex flex-col justify-between shadow-2xl z-10 animate-in slide-in-from-left duration-300">
+                <div>
+                  <div className="flex items-center justify-between pb-5 border-b border-gray-800">
+                    <span className="font-bold text-lg text-white">Menu de Navegação</span>
+                    <button 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800"
+                    >
+                      <i data-lucide="x" className="w-5 h-5"></i>
+                    </button>
+                  </div>
+
+                  <nav className="flex flex-col gap-3 mt-6 text-base font-medium text-gray-300">
+                    <a 
+                      href="#home" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="home" className="w-5 h-5 text-cyan-400"></i> Home
+                    </a>
+                    <a 
+                      href="#sobre" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="user" className="w-5 h-5 text-cyan-400"></i> Sobre
+                    </a>
+                    <a 
+                      href="#servicos" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="briefcase" className="w-5 h-5 text-cyan-400"></i> Serviços
+                    </a>
+                    <a 
+                      href="#especialidade" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="code-2" className="w-5 h-5 text-cyan-400"></i> Especialidades
+                    </a>
+                    <a 
+                      href="#projetos" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="folder-kanban" className="w-5 h-5 text-cyan-400"></i> Projetos
+                    </a>
+                    <a 
+                      href="#contato" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 hover:text-cyan-400 transition-all"
+                    >
+                      <i data-lucide="mail" className="w-5 h-5 text-cyan-400"></i> Contato
+                    </a>
+                  </nav>
+                </div>
+
+                <div className="pt-6 border-t border-gray-800">
+                  <a 
+                    href={`https://api.whatsapp.com/send?phone=${PORTFOLIO_DATA.whatsapp}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-3 rounded-xl text-center font-semibold text-sm bg-gradient-to-r from-emerald-500 to-teal-600 text-white block shadow-lg shadow-emerald-500/20"
+                  >
+                    Falar no WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* --- HERO SECTION --- */}
+          <section id="home" className="relative pt-12 md:pt-24 pb-16 px-4 sm:px-8 max-w-6xl mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* Infos principais */}
+              <div className="lg:col-span-7 space-y-6 text-left">
+                
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-xs font-semibold text-cyan-300 border border-cyan-500/30">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Desenvolvedor Junior • {PORTFOLIO_DATA.location}
+                </div>
+
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                  Olá, eu sou <br />
+                  <span className="gradient-text">{PORTFOLIO_DATA.name}</span>
+                </h1>
+
+                {/* Efeito de digitação reativo */}
+                <div className="min-h-[2.5rem] text-lg sm:text-2xl font-mono text-cyan-400 font-medium flex items-center">
+                  <span>{typedRole}</span>
+                  <span className="w-0.5 h-6 bg-cyan-400 ml-1 animate-ping"></span>
+                </div>
+
+                <p className="text-gray-400 text-sm sm:text-base leading-relaxed max-w-xl">
+                  Bem-vindo ao meu portfólio. Sou Desenvolvedor Junior formado em {PORTFOLIO_DATA.education} e entusiasta em hardware e tecnologia.
+                </p>
+
+                {/* Botões de Ação */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                  <a 
+                    href={PORTFOLIO_DATA.linkedin}
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-semibold text-sm shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all text-center flex items-center justify-center gap-2"
+                  >
+                    Contratar-me
+                    <i data-lucide="briefcase" className="w-4 h-4"></i>
+                  </a>
+
+                  <a 
+                    href="#projetos" 
+                    className="px-6 py-3.5 rounded-xl glass-card text-gray-200 hover:text-white font-semibold text-sm hover:bg-gray-800/80 transition-all text-center border border-gray-700/80 flex items-center justify-center gap-2"
+                  >
+                    Ver Projetos
+                    <i data-lucide="arrow-down" className="w-4 h-4"></i>
+                  </a>
+                </div>
+
+                {/* Ícones Sociais */}
+                <div className="flex items-center gap-4 pt-4 text-gray-400">
+                  <span className="text-xs font-mono uppercase tracking-wider text-gray-500">Links:</span>
+                  <a 
+                    href={PORTFOLIO_DATA.github} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="p-2.5 rounded-xl glass-card text-gray-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-all"
+                    aria-label="GitHub"
+                  >
+                    <GithubIcon className="w-5 h-5" />
+                  </a>
+                  <a 
+                    href={PORTFOLIO_DATA.linkedin} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="p-2.5 rounded-xl glass-card text-gray-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-all"
+                    aria-label="LinkedIn"
+                  >
+                    <LinkedinIcon className="w-5 h-5" />
+                  </a>
+                  <a 
+                    href={`https://api.whatsapp.com/send?phone=${PORTFOLIO_DATA.whatsapp}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="p-2.5 rounded-xl glass-card text-gray-300 hover:text-emerald-400 hover:border-emerald-500/50 transition-all"
+                    aria-label="WhatsApp"
+                  >
+                    <WhatsappIcon className="w-5 h-5" />
+                  </a>
+                </div>
+
+              </div>
+
+              {/* Card de Apresentação / Perfil */}
+              <div className="lg:col-span-5 flex justify-center mt-6 lg:mt-0">
+                <div className="relative w-full max-w-sm">
+                  
+                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-indigo-600 rounded-3xl blur-2xl opacity-25 animate-pulse"></div>
+
+                  <div className="relative glass-card p-6 sm:p-8 rounded-3xl border border-gray-700/50 shadow-2xl flex flex-col items-center text-center">
+                    
+                    <div className="relative w-32 h-32 sm:w-36 sm:h-36 mb-6">
+                      <img 
+                        src={PORTFOLIO_DATA.profileImage} 
+                        alt="Luhan Marques Profile" 
+                        className="w-full h-full object-cover rounded-2xl shadow-xl ring-4 ring-cyan-500/30"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://github.com/Luanmarqz.png";
+                        }}
+                      />
+                      <div className="absolute -bottom-2 -right-2 bg-gray-900 border border-gray-700 p-2 rounded-xl text-cyan-400 shadow-lg">
+                        <i data-lucide="code" className="w-5 h-5"></i>
+                      </div>
+                    </div>
+
+                    <h2 className="text-xl font-bold text-white mb-1">{PORTFOLIO_DATA.name}</h2>
+                    <p className="text-xs font-mono text-cyan-400 mb-4">{PORTFOLIO_DATA.location}</p>
+
+                    <div className="w-full border-t border-gray-800 pt-4 mt-2 space-y-2 text-left">
+                      <div className="flex items-center gap-2 text-xs text-gray-300">
+                        <i data-lucide="graduation-cap" className="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <span>{PORTFOLIO_DATA.education}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-300">
+                        <i data-lucide="mail" className="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <span className="truncate">{PORTFOLIO_DATA.email}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* --- ABOUT SECTION --- */}
+          <section id="sobre" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto w-full">
+            <div className="glass-card p-6 sm:p-10 rounded-3xl border border-gray-800">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                
+                <div className="md:col-span-4 flex justify-center">
+                  <img 
+                    src={PORTFOLIO_DATA.profileImage} 
+                    alt="Sobre Luhan Marques" 
+                    className="w-full max-w-xs h-72 sm:h-80 object-cover rounded-2xl border border-gray-700 shadow-xl"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://github.com/Luanmarqz.png";
+                    }}
+                  />
+                </div>
+
+                <div className="md:col-span-8 space-y-6">
+                  <div>
+                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-1">Biografia</span>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Sobre Mim</h2>
+                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed mt-3">
+                      {PORTFOLIO_DATA.bioAbout}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-gray-800 pt-5">
+                    <h3 className="text-lg font-bold text-white mb-2">Trajetória</h3>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      {PORTFOLIO_DATA.bioTrajectory}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* --- SERVICES SECTION --- */}
+          <section id="servicos" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto w-full">
+            <div className="text-center max-w-xl mx-auto mb-12">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-2">O que eu faço</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Meus Serviços</h2>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">Aqui estão alguns dos serviços que ofereço como desenvolvedor.</p>
+              <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-auto mt-3 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {PORTFOLIO_DATA.services.map((srv, idx) => (
+                <div key={idx} className="glass-card p-6 rounded-2xl border border-gray-800 hover:border-cyan-500/40 transition-all duration-300 group hover:-translate-y-1">
+                  <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-5 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                    <i data-lucide={srv.icon} className="w-6 h-6"></i>
+                  </div>
+                  <span className="text-xs font-mono text-cyan-400 block mb-1">{srv.subtitle}</span>
+                  <h3 className="text-xl font-bold text-white mb-3">{srv.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{srv.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* --- SPECIALTIES / SKILLS SECTION --- */}
+          <section id="especialidade" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto w-full">
+            <div className="text-center max-w-xl mx-auto mb-12">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-2">Stack & Habilidades</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Minhas Especialidades</h2>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">Tecnologias com as quais trabalho no meu dia a dia.</p>
+              <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-auto mt-3 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {PORTFOLIO_DATA.skills.map((skill, idx) => (
+                <div key={idx} className="glass-card p-6 rounded-2xl border border-gray-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <span className="text-xs font-mono text-cyan-400 block">{skill.category}</span>
+                      <h3 className="text-base font-bold text-white mt-0.5">{skill.name}</h3>
+                    </div>
+                    <span className="text-sm font-mono text-gray-400 font-semibold">{skill.level}%</span>
+                  </div>
+
+                  <div className="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-cyan-500 to-indigo-500 h-full rounded-full transition-all duration-1000"
+                      style={{ width: `${skill.level}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* --- PROJECTS SECTION --- */}
+          <section id="projetos" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto w-full">
+            <div className="text-center max-w-xl mx-auto mb-12">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-2">Portfólio</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Meus Projetos</h2>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">Aqui estão alguns dos meus principais projetos desenvolvidos.</p>
+              <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-auto mt-3 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              {PORTFOLIO_DATA.projects.map((proj) => (
+                <div 
+                  key={proj.id}
+                  className="glass-card rounded-2xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all duration-300 flex flex-col group"
+                >
+                  <div className="relative h-48 sm:h-52 overflow-hidden bg-gray-900">
+                    <img 
+                      src={proj.image} 
+                      alt={proj.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80";
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-80"></div>
+                  </div>
+
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1.5 group-hover:text-cyan-400 transition-colors">
+                        {proj.title}
+                      </h3>
+                      <p className="text-xs font-mono text-cyan-400 mb-3">{proj.tech}</p>
+                      <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                        {proj.description}
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {proj.tags.map((t, tIdx) => (
+                          <span key={tIdx} className="px-2 py-0.5 rounded text-[11px] font-mono bg-gray-800 text-gray-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-3 border-t border-gray-800">
+                        <a 
+                          href={proj.liveUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="flex-1 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white text-xs font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
+                        >
+                          <i data-lucide="external-link" className="w-4 h-4"></i> Acessar Projeto
+                        </a>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* --- CONTACT SECTION --- */}
+          <section id="contato" className="py-16 px-4 sm:px-8 max-w-4xl mx-auto w-full">
+            <div className="text-center max-w-xl mx-auto mb-10">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-2">Fale Conosco</span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-white">Entre em Contato</h2>
+              <p className="text-gray-400 text-xs sm:text-sm mt-2">
+                Estou disponível para novas oportunidades, projetos e parcerias. Fale comigo diretamente através de um dos canais abaixo:
+              </p>
+              <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-auto mt-3 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card WhatsApp Direct */}
+              <a 
+                href={`https://api.whatsapp.com/send?phone=${PORTFOLIO_DATA.whatsapp}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="glass-card p-5 rounded-2xl border border-emerald-500/30 hover:border-emerald-400 transition-all flex items-center gap-4 group hover:-translate-y-0.5"
+              >
+                <div className="p-3.5 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors shrink-0">
+                  <WhatsappIcon className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="block text-xs text-emerald-400 font-mono font-semibold uppercase tracking-wider">Conversa Direta</span>
+                  <span className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">WhatsApp</span>
+                </div>
+              </a>
+
+              {/* Card Email com clique para copiar */}
+              <div 
+                onClick={() => copyToClipboard(PORTFOLIO_DATA.email, "Email")}
+                className="glass-card p-5 rounded-2xl border border-gray-800 hover:border-cyan-500/50 transition-all flex items-center gap-4 cursor-pointer group hover:-translate-y-0.5"
+              >
+                <div className="p-3.5 rounded-xl bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
+                  <i data-lucide="mail" className="w-6 h-6"></i>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="block text-xs text-cyan-400 font-mono uppercase tracking-wider">Email (clique p/ copiar)</span>
+                  <span className="text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors truncate block">
+                    {PORTFOLIO_DATA.email}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card LinkedIn */}
+              <a 
+                href={PORTFOLIO_DATA.linkedin} 
+                target="_blank" 
+                rel="noreferrer"
+                className="glass-card p-5 rounded-2xl border border-gray-800 hover:border-cyan-500/50 transition-all flex items-center gap-4 group hover:-translate-y-0.5"
+              >
+                <div className="p-3.5 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shrink-0">
+                  <LinkedinIcon className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="block text-xs text-indigo-400 font-mono uppercase tracking-wider">Rede Profissional</span>
+                  <span className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">LinkedIn</span>
+                </div>
+              </a>
+
+              {/* Card GitHub */}
+              <a 
+                href={PORTFOLIO_DATA.github} 
+                target="_blank" 
+                rel="noreferrer"
+                className="glass-card p-5 rounded-2xl border border-gray-800 hover:border-cyan-500/50 transition-all flex items-center gap-4 group hover:-translate-y-0.5"
+              >
+                <div className="p-3.5 rounded-xl bg-gray-700/30 text-gray-300 group-hover:bg-white group-hover:text-gray-900 transition-colors shrink-0">
+                  <GithubIcon className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="block text-xs text-gray-400 font-mono uppercase tracking-wider">Repositórios</span>
+                  <span className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">GitHub</span>
+                </div>
+              </a>
+            </div>
+
+            {/* Badge de Localização */}
+            <div className="mt-6 glass-card p-4 rounded-2xl border border-gray-800/80 flex items-center justify-center gap-3 text-xs text-gray-400 font-mono text-center">
+              <i data-lucide="map-pin" className="w-4 h-4 text-cyan-400 shrink-0"></i>
+              <span>Baseado em <strong className="text-white">{PORTFOLIO_DATA.location}</strong> • Disponível para trabalho remoto e presencial</span>
+            </div>
+          </section>
+
+          {/* --- FOOTER --- */}
+          <footer className="mt-auto border-t border-gray-800/80 py-8 px-4 text-center text-xs text-gray-500 font-mono">
+            <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p>© {new Date().getFullYear()} {PORTFOLIO_DATA.name}. Todos os direitos reservados.</p>
+              <div className="flex items-center gap-4 text-gray-400">
+                <a href="#home" className="hover:text-cyan-400 transition-colors">Home</a>
+                <a href="#sobre" className="hover:text-cyan-400 transition-colors">Sobre</a>
+                <a href="#projetos" className="hover:text-cyan-400 transition-colors">Projetos</a>
+                <a href="#contato" className="hover:text-cyan-400 transition-colors">Contato</a>
+              </div>
+            </div>
+          </footer>
+
+          {/* --- TOAST NOTIFICATION --- */}
+          {toastMessage && (
+            <div className="fixed bottom-6 right-6 z-50 glass-card border border-cyan-500/40 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce">
+              <i data-lucide="check-circle" className="w-5 h-5 text-cyan-400"></i>
+              <span className="text-xs sm:text-sm font-medium">{toastMessage}</span>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    // Renderizar a aplicação
+    const rootElement = document.getElementById("root");
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>
